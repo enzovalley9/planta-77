@@ -1,0 +1,42 @@
+import { expect, test } from 'claude-code/testing'
+import { modelOf, stageScene, twin, direct, sleep, DATA, NOW, COLS, ROWS } from './fixture'
+
+test('/office diag makes the stage fly around the floor and report how it went, with the pages in use, the detail level and the busiest second of messages, and the hooks keep that report', { timeoutMs: 30000 }, async () => {
+  const st = stageScene(await modelOf(), { lod: 1, bucket: 2 }), t = twin(st.ui)
+  for (const n of [0, 1, 2, 3, 4]) t.page(n)
+  t.load(st.layers)
+  const home = { ...t.G.cam }, moved = new Set<string>(), start = Date.now()
+  t.redraw({ ...st.ui, diag: 7 })
+  const report = () => t.listeners.posts.find((p) => p.kind === 'diag')
+  while (!report() && Date.now() - start < 9000) {
+    await sleep(50)
+    t.tick()
+    t.hosted()
+    moved.add(`${Math.round(t.G.cam.cx)},${Math.round(t.G.cam.cy)},${t.G.cam.s.toFixed(3)}`)
+  }
+  const sent = report()
+  expect(sent).toMatchObject({ kind: 'diag', seq: 7, rho: 2.4, cal: 0, cols: COLS, rows: ROWS, layers: `${st.layers.length}/${st.layers.length}`, lod: 1, raw: false, hidden: null })
+  expect(Date.now() - start).toBeGreaterThanOrEqual(4200)
+  expect(moved.size).toBeGreaterThan(20)
+  expect(t.G.cam).toEqual(home)
+  expect(sent.ms).toBeGreaterThanOrEqual(3600)
+  expect(sent.renders).toBeGreaterThan(30)
+  expect(sent.fps).toBeGreaterThan(5)
+  expect(sent.maxGap).toBeGreaterThanOrEqual(50)
+  expect(sent.pages).toBeGreaterThanOrEqual(1)
+  expect(sent.pages).toBeLessThanOrEqual(5)
+  expect(sent.msgs).toBeGreaterThan(10)
+  expect(sent.msgs).toBeLessThanOrEqual(400)
+  expect(Object.values(sent).every((value) => value === null || ['number', 'string', 'boolean'].includes(typeof value))).toBe(true)
+  expect(JSON.stringify(sent).length).toBeLessThan(1000)
+  const h = await direct()
+  await h.run('office', 'diag')
+  const seq = (await h.ui()).diag
+  expect(seq).toBe(NOW)
+  await h.post({ ...sent, seq })
+  const kept = JSON.parse(h.d.writes.get(`${DATA}/diag.json`)!)
+  expect(kept).toMatchObject({ at: NOW, fps: sent.fps, renders: sent.renders, ms: sent.ms, maxGap: sent.maxGap, slow: sent.slow, rho: 2.4, cal: 0, cols: COLS, rows: ROWS, layers: sent.layers, bucket: sent.bucket, pages: sent.pages, lod: 1, msgs: sent.msgs, raw: false, hidden: false, compat: false })
+  expect(Object.keys(sent).filter((key) => !['kind', 'seq'].includes(key) && !(key in kept))).toEqual([])
+  expect(h.d.toasts.at(-1)).toBe(`Planta 77: ${sent.fps} fps over ${sent.renders} frames, slowest ${sent.maxGap} ms, ${sent.layers} layers, ${COLS}x${ROWS} cells`)
+  expect('diag' in (await h.ui())).toBe(false)
+})

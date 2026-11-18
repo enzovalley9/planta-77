@@ -1,0 +1,70 @@
+{
+  "name": "planta-77",
+  "displayName": "planta-77",
+  "version": "1.0.0",
+  "description": "Your Claude Code sessions as characters on a cyberpunk office floor you can fly around: /office is the floor with one room per project and /cameras is the security room with a camera per room, live traces and the system load",
+  "author": {
+    "name": "Enzo Valley",
+    "url": "https://github.com/enzovalley9"
+  },
+  "homepage": "https://github.com/enzovalley9/planta-77",
+  "repository": "https://github.com/enzovalley9/planta-77",
+  "license": "MIT",
+  "keywords": [
+    "mod",
+    "sessions",
+    "desktop",
+    "dashboard",
+    "cyberpunk"
+  ],
+  "userConfig": {
+    "language": {
+      "type": "string",
+      "title": "Language",
+      "description": "Language of the pane, the commands and the messages",
+      "options": [
+        "en",
+        "es"
+      ],
+      "default": "en"
+    },
+    "party_desks": {
+      "type": "boolean",
+      "title": "Desks for sessions at the party",
+      "description": "Keep an empty desk in their room for sessions that are in the bunker (between 14 hours and 3 days without use)",
+      "default": false
+    },
+    "ai_grouping": {
+      "type": "boolean",
+      "title": "Group projects with AI",
+      "description": "Ask Haiku to put folders of the same project together; it only asks again when a new folder appears",
+      "default": true
+    },
+    "refresh_seconds": {
+      "type": "number",
+      "title": "Refresh",
+      "description": "Seconds between updates while the pane is open",
+      "default": 5,
+      "min": 5,
+      "max": 120
+    },
+    "container_prefix": {
+      "type": "string",
+      "title": "Container prefix",
+      "description": "Optional prefix to drop from Docker container names in the server room, such as the compose project name",
+      "default": ""
+    },
+    "wheel_zoom": {
+      "type": "boolean",
+      "title": "Zoom with the mouse wheel",
+      "description": "Turn the wheel into zoom at the pointer. Turn it off if the pane jumps when you scroll; the + and − buttons and keys always work",
+      "default": true
+    },
+    "compat_mode": {
+      "type": "boolean",
+      "title": "Compatible mode",
+      "description": "Draw the floor as a still picture without camera movement. The mod switches to it by itself if the app refuses the live view",
+      "default": false
+    }
+  }
+}

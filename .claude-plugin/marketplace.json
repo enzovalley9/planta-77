@@ -1,0 +1,8 @@
+{
+  "name": "planta-77",
+  "owner": { "name": "Enzo Valley", "url": "https://github.com/enzovalley9" },
+  "metadata": { "description": "planta-77, a Claude Code mod that turns your sessions into a cyberpunk office floor" },
+  "plugins": [
+    { "name": "planta-77", "source": "./", "description": "Your Claude Code sessions as characters on a cyberpunk office floor, with a security room of live cameras" }
+  ]
+}
